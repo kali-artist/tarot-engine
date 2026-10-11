@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050810" />
+  <title>申派塔罗 · 真实牌义 诚实抽牌</title>
+  <meta name="description" content="申派塔罗 —— 真实牌义 · 诚实抽牌 · 仪式感占卜" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- starfield: three drift layers + twinkles + meteors + nebula glow -->
+  <div class="sky" aria-hidden="true">
+    <div class="stars stars--far" id="starsFar"></div>
+    <div class="stars stars--mid" id="starsMid"></div>
+    <div class="stars stars--near" id="starsNear"></div>
+    <div class="twinkles" id="twinkles"></div>
+    <div class="meteor meteor--1"></div>
+    <div class="meteor meteor--2"></div>
+    <div class="nebula"></div>
+  </div>
+
+  <div class="demo-badge" id="demoBadge" hidden>演示模式</div>
+
+  <main class="stage">
+
+    <!-- ============ SCREEN 1 · LANDING ============ -->
+    <section class="screen screen--landing is-active" id="screenLanding" data-screen="landing">
+      <div class="landing__inner">
+        <div class="cardback" aria-hidden="true">
+          <div class="cardback__glow"></div>
+          <div class="cardback__face">
+            <div class="cardback__sigil">
+              <svg viewBox="0 0 100 100" role="img" aria-label="星盘纹样">
+                <circle cx="50" cy="50" r="34" class="sigil-ring" />
+                <circle cx="50" cy="50" r="22" class="sigil-ring sigil-ring--thin" />
+                <path d="M50 16 L58 42 L84 50 L58 58 L50 84 L42 58 L16 50 L42 42 Z" class="sigil-star" />
+                <circle cx="50" cy="50" r="3.4" class="sigil-core" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <h1 class="title-gold landing__title">申派塔罗</h1>
+        <p class="landing__subtitle">真实牌义 · 诚实抽牌 · 仪式感占卜</p>
+        <button class="btn btn--primary btn--lg" id="startBtn" type="button"><span class="btn__text">开始占卜</span></button>
+      </div>
+      <div class="scroll-hint" aria-hidden="true">祈请静心，向下开始</div>
+    </section>
+
+    <!-- ============ SCREEN 2 · SETUP ============ -->
+    <section class="screen screen--setup" id="screenSetup" data-screen="setup">
+      <header class="screen__head">
+        <h2 class="title-gold">静心 · 设置</h2>
+        <p class="screen__lead">在心里默念你的问题，越具体，牌面越清晰。</p>
+      </header>
+
+      <form class="panel glass" id="setupForm" novalidate>
+        <label class="field">
+          <span class="field__label">你想问什么？</span>
+          <textarea class="field__input field__textarea" id="question" rows="3"
+            placeholder="例如：我和他之间的关系接下来会如何发展？" maxlength="500"></textarea>
+        </label>
+
+        <label class="field">
+          <span class="field__label">生日 <span class="field__opt">（可选 · 用于本命共振，不填跳过）</span></span>
+          <input class="field__input" type="date" id="birthday" />
+        </label>
+
+        <div class="field">
+          <span class="field__label">选择牌阵</span>
+          <div class="spread-grid" id="spreadGrid" role="radiogroup" aria-label="牌阵选择">
+            <div class="spread-grid__loading">牌阵加载中…</div>
+          </div>
+        </div>
+
+        <button class="btn btn--primary btn--block" id="drawBtn" type="submit">开始抽牌</button>
+        <p class="form-error" id="setupError" hidden></p>
+      </form>
+    </section>
+
+    <!-- ============ SCREEN 3 · ANIMATION ============ -->
+    <section class="screen screen--anim" id="screenAnim" data-screen="anim">
+      <header class="screen__head screen__head--tight">
+        <h2 class="title-gold" id="animTitle">洗牌中</h2>
+        <p class="screen__lead" id="animCount">正在为你的问题抽出卡牌…</p>
+      </header>
+      <div class="fan" id="fan"></div>
+      <div class="anim__actions">
+        <button class="btn btn--primary" id="revealDoneBtn" type="button" hidden>查看解读</button>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN 4 · READING ============ -->
+    <section class="screen screen--reading" id="screenReading" data-screen="reading">
+      <header class="screen__head">
+        <h2 class="title-gold">牌面解读</h2>
+        <p class="screen__lead" id="readingMeta"></p>
+        <div class="seed-row">
+          <span class="seed-chip" id="seedChip">seed —</span>
+          <span class="seed-chip" id="domainChip"></span>
+        </div>
+      </header>
+
+      <article class="panel glass prose" id="readingText"></article>
+
+      <section class="block">
+        <h3 class="block__title">牌位</h3>
+        <div class="mini-grid" id="miniGrid"></div>
+      </section>
+
+      <section class="block" id="relBlock" hidden>
+        <h3 class="block__title">牌际关系</h3>
+        <div class="rel-list" id="relList"></div>
+      </section>
+
+      <section class="block">
+        <h3 class="block__title">能量账本</h3>
+        <div class="stats glass" id="statsBox"></div>
+      </section>
+
+      <section class="block" id="sigBlock" hidden>
+        <h3 class="block__title">本命共振</h3>
+        <div class="signal glass" id="sigBox"></div>
+      </section>
+
+      <div class="reading__actions">
+        <button class="btn btn--primary" id="againBtn" type="button">再抽一次</button>
+        <button class="btn btn--ghost" id="resetBtn" type="button">换个问题</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
